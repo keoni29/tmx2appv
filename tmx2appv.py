@@ -6,7 +6,7 @@
 
 import pytmx as tm
 import sys
-import int_utils as iu
+from int_utils import *
 
 # Name of the layer which holds our tilemap data
 tile_layer_name = "Tile Layer 1"
@@ -39,8 +39,10 @@ if t == None:
 	print("This layer is required for generating the appVar. Perhaps you misspelled its name?")
 	sys.exit(1)
 
+# TODO remove this line
 ## Uncomment to see all available attributes
-print(dir(t))
+#print(dir(t))
+
 print("Found layer", '"' + t.name + '"')
 print("Layer size =", t.width, "x", t.height, "tiles")
 
@@ -60,8 +62,8 @@ print("Now converting to appVar!")
 # TODO: Change to variable instead of harcoded fname
 f = open('HCMT.tmp', mode='wb')
 
-f.write(iu.int2b8(World.width))
-f.write(iu.int2b8(World.height))
+f.write(int2b8(World.width))
+f.write(int2b8(World.height))
 
 for wy in range(0, World.height):
 	for wx in range(0, World.width):
@@ -71,8 +73,9 @@ for wy in range(0, World.height):
 				y = wy * Room.height + ry
 
 				# TODO: This layer number should not be fixed!
-				gid = tmxdata.get_tile_gid(x, y, 0) - 1
+				gid = tmxdata.get_tile_gid(x, y, 0)
+				tileId = gid - 1
 
-				f.write(iu.int2b8(gid))
+				f.write(int2b8(tileId))
 
 f.close()

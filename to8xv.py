@@ -3,8 +3,16 @@
 	(Python version) """
 
 # TODO use commandline params
+from int_utils import *
+import warnings
 
-import int_utils as iu
+def bytes_pad(b, size):
+	if len(b) > size:
+		warnings.warn("Truncating oversized bytearray rather than padding to size")
+		return b[0:(size-1)]
+	else:
+		return b + bytearray(size - len(b))
+
 
 TI83F_SIGNATURE = b'\x2A\x2A\x54\x49\x38\x33\x46\x2A\x1A\x0A\x00'
 TI83F_COMMENT = b'AppVariable file'
@@ -17,8 +25,8 @@ VAR_FLAG = b'\x00'	# \x80 for archived. \x00 otherwise
 varHeaderSize = 19
 
 # Pad certain fields (TODO refactor)
-TI83F_COMMENT += bytearray(42 - len(TI83F_COMMENT))
-VAR_NAME += bytearray(8 - len(VAR_NAME))
+TI83F_COMMENT = bytes_pad(TI83F_COMMENT, 42)
+VAR_NAME = bytes_pad(VAR_NAME, 8)
 
 fname_src = "HCMT.tmp"
 # TODO base output filename on input filename if no
@@ -28,16 +36,21 @@ fname_dst = "HCMT.8xv"
 src = open(fname_src, 'rb')
 dst = open(fname_dst, 'wb')
 VAR_DATA = src.read(-1)
+
 dataSize = len(VAR_DATA)
 varSize = dataSize + 2		# 2 bytes for variable header
-totalSize = dataSize + varHeaderSize
 
-APPV_HEADER = TI83F_SIGNATURE + TI83F_COMMENT + iu.int2b16(totalSize)
-VAR_HEADER = VAR_START + iu.int2b16(varSize) + VAR_TYPEID + VAR_NAME + \
-	VAR_VERSION	+ VAR_FLAG + iu.int2b16(varSize) + iu.int2b16(dataSize)
+APPV_HEADER = TI83F_SIGNATURE + TI83F_COMMENT
+totalSize = varSize + len(APPV_HEADER)
+APPV_HEADER += int2b16(totalSize)
+
+VAR_HEADER = VAR_START + int2b16(varSize) + VAR_TYPEID + VAR_NAME + \
+	VAR_VERSION	+ VAR_FLAG + int2b16(varSize) + int2b16(dataSize)
 
 # Lower 16 bits of sum of all bytes in data segment and variable header combined
-VAR_CHECKSUM = iu.int2b16(sum(VAR_HEADER) + sum(VAR_DATA))
+VAR_SUM = sum(VAR_HEADER) + sum(VAR_DATA)
+VAR_CHECKSUM = int2b16(VAR_SUM)
+print("Checksum =", hex(VAR_SUM))
 
 dst.write(APPV_HEADER + VAR_HEADER + VAR_DATA + VAR_CHECKSUM);
 
