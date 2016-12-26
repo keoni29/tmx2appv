@@ -21,7 +21,7 @@ VAR_START = b'\x0D\x00'
 VAR_TYPEID = b'\x15'
 VAR_NAME = b'HCMT'
 VAR_VERSION = b'\x00'
-VAR_FLAG = b'\x00'	# \x80 for archived. \x00 otherwise
+VAR_FLAG = b'\x80'	# \x80 for archived. \x00 otherwise
 varHeaderSize = 19
 
 # Pad certain fields (TODO refactor)
