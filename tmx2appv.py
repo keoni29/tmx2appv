@@ -6,6 +6,7 @@
 
 import pytmx as tm
 import sys
+import int_utils as iu
 
 # Name of the layer which holds our tilemap data
 tile_layer_name = "Tile Layer 1"
@@ -28,16 +29,7 @@ class bcol:
     FAIL = '\033[91m'
     ENDC = '\033[0m'
 
-# Hack to convert int type to a string of two bytes. Little endian
-def int2b16(val):
-	val_l = chr(val % 256)
-	val_h = chr(int(val / 256))
-	return (val_l + val_h).encode()
-
-# Hack to convert int type to a string of one byte.
-def int2b8(val):
-	return chr(val % 256).encode()
-
+# TODO: Change to variable instead of hardcoded filename
 tmxdata = tm.TiledMap('map.tmx')
 
 t = tmxdata.get_layer_by_name(tile_layer_name)
@@ -65,10 +57,11 @@ if World.width > 255 or World.height > 255:
 
 print("Now converting to appVar!")
 
-f = open('HCMT.8xv', mode='wb')
+# TODO: Change to variable instead of harcoded fname
+f = open('HCMT.tmp', mode='wb')
 
-f.write(int2b8(World.width))
-f.write(int2b8(World.height))
+f.write(iu.int2b8(World.width))
+f.write(iu.int2b8(World.height))
 
 for wy in range(0, World.height):
 	for wx in range(0, World.width):
@@ -80,6 +73,6 @@ for wy in range(0, World.height):
 				# TODO: This layer number should not be fixed!
 				gid = tmxdata.get_tile_gid(x, y, 0) - 1
 
-				f.write(int2b8(gid))
+				f.write(iu.int2b8(gid))
 
 f.close()
