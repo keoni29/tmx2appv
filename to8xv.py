@@ -40,9 +40,7 @@ VAR_DATA = src.read(-1)
 dataSize = len(VAR_DATA)
 varSize = dataSize + 2		# 2 bytes for variable header
 
-APPV_HEADER = TI83F_SIGNATURE + TI83F_COMMENT
-totalSize = varSize + len(APPV_HEADER)
-APPV_HEADER += int2b16(totalSize)
+APPV_HEADER = TI83F_SIGNATURE + TI83F_COMMENT + int2b16(dataSize + varHeaderSize)
 
 VAR_HEADER = VAR_START + int2b16(varSize) + VAR_TYPEID + VAR_NAME + \
 	VAR_VERSION	+ VAR_FLAG + int2b16(varSize) + int2b16(dataSize)
