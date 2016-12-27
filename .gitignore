@@ -94,5 +94,7 @@ ENV/
 *.8xv
 *.tmx
 *.tmp
-
+*.png
+*.bmp
+*.gif
 
