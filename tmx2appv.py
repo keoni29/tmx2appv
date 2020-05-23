@@ -4,10 +4,16 @@
 	(Designed to use with Hero Core ti83/4+ version)
 	Author: Koen van Vliet <8by8mail@gmail.com> """
 
+import os
+
+try:
+	os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+except:
+	pass
+
 import pytmx as tm
 import sys
 import argparse
-import os
 from to8xv import ti83f
 from to8xv.ti83f import int2b8
 
